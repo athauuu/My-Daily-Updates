@@ -3,251 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Athau's Daily Dashboard</title>
+  <title>Athau's Daily Updates</title>
   <style>
     :root[data-theme="dark"] {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #22263a;
-      --border: #2e3250;
-      --text: #e8eaf6;
-      --text-muted: #7b82a8;
-      --accent: #7c6ff7;
-      --accent-glow: rgba(124,111,247,0.15);
-      --overdue: #f87171;
-      --overdue-bg: rgba(248,113,113,0.08);
-      --today: #fbbf24;
-      --today-bg: rgba(251,191,36,0.08);
-      --upcoming: #34d399;
-      --upcoming-bg: rgba(52,211,153,0.08);
-      --toggle-bg: #22263a;
-      --toggle-knob: #7c6ff7;
-      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3250;
+      --text:#e8eaf6;--text-muted:#7b82a8;--accent:#7c6ff7;
+      --overdue:#f87171;--overdue-bg:rgba(248,113,113,.08);
+      --today:#fbbf24;--today-bg:rgba(251,191,36,.08);
+      --upcoming:#34d399;--upcoming-bg:rgba(52,211,153,.08);
+      --toggle-bg:#22263a;--toggle-knob:#7c6ff7;--shadow:0 4px 24px rgba(0,0,0,.4);
     }
     :root[data-theme="light"] {
-      --bg: #f0f2f9;
-      --surface: #ffffff;
-      --surface2: #f5f6fb;
-      --border: #dde0f0;
-      --text: #1a1d2e;
-      --text-muted: #7b82a8;
-      --accent: #5b52e8;
-      --accent-glow: rgba(91,82,232,0.10);
-      --overdue: #dc2626;
-      --overdue-bg: rgba(220,38,38,0.06);
-      --today: #d97706;
-      --today-bg: rgba(217,119,6,0.06);
-      --upcoming: #059669;
-      --upcoming-bg: rgba(5,150,105,0.06);
-      --toggle-bg: #dde0f0;
-      --toggle-knob: #5b52e8;
-      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+      --bg:#f0f2f9;--surface:#fff;--surface2:#f5f6fb;--border:#dde0f0;
+      --text:#1a1d2e;--text-muted:#7b82a8;--accent:#5b52e8;
+      --overdue:#dc2626;--overdue-bg:rgba(220,38,38,.06);
+      --today:#d97706;--today-bg:rgba(217,119,6,.06);
+      --upcoming:#059669;--upcoming-bg:rgba(5,150,105,.06);
+      --toggle-bg:#dde0f0;--toggle-knob:#5b52e8;--shadow:0 4px 24px rgba(0,0,0,.08);
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 24px 16px 48px;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    header {
-      max-width: 860px;
-      margin: 0 auto 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .header-left h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-    .header-left .subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* Theme toggle */
-    .toggle-wrap { display: flex; align-items: center; gap: 8px; }
-    .toggle-label { font-size: 0.78rem; color: var(--text-muted); }
-    .toggle {
-      position: relative;
-      width: 44px;
-      height: 24px;
-      cursor: pointer;
-    }
-    .toggle input { display: none; }
-    .toggle-track {
-      width: 100%;
-      height: 100%;
-      background: var(--toggle-bg);
-      border-radius: 99px;
-      border: 1px solid var(--border);
-      transition: background 0.3s;
-    }
-    .toggle-knob {
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 18px;
-      height: 18px;
-      background: var(--toggle-knob);
-      border-radius: 50%;
-      transition: transform 0.25s;
-    }
-    [data-theme="light"] .toggle-knob { transform: translateX(20px); }
-
-    /* Stats bar */
-    .stats {
-      max-width: 860px;
-      margin: 0 auto 28px;
-      display: flex;
-      gap: 12px;
-    }
-    .stat-card {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 18px;
-      box-shadow: var(--shadow);
-    }
-    .stat-card .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
-    .stat-card .stat-value { font-size: 1.7rem; font-weight: 700; line-height: 1.1; margin-top: 4px; }
-    .stat-card.overdue .stat-value { color: var(--overdue); }
-    .stat-card.today .stat-value { color: var(--today); }
-    .stat-card.upcoming .stat-value { color: var(--upcoming); }
-
-    /* Sections */
-    .sections { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-
-    .section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-    .dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-    }
-    .section.overdue .dot { background: var(--overdue); box-shadow: 0 0 6px var(--overdue); }
-    .section.today .dot { background: var(--today); box-shadow: 0 0 6px var(--today); }
-    .section.upcoming .dot { background: var(--upcoming); box-shadow: 0 0 6px var(--upcoming); }
-
-    .badge {
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 2px 9px;
-      border-radius: 99px;
-    }
-    .section.overdue .badge { background: var(--overdue-bg); color: var(--overdue); }
-    .section.today .badge { background: var(--today-bg); color: var(--today); }
-    .section.upcoming .badge { background: var(--upcoming-bg); color: var(--upcoming); }
-
-    /* Task list */
-    .task-list { list-style: none; }
-    .task-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-    .task-item:last-child { border-bottom: none; }
-    .task-item:hover { background: var(--surface2); }
-
-    .task-icon {
-      margin-top: 2px;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    .task-body { flex: 1; min-width: 0; }
-    .task-name {
-      font-size: 0.88rem;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .task-meta {
-      display: flex;
-      gap: 10px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
-    .task-meta span {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .task-deadline {
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 6px;
-      flex-shrink: 0;
-      align-self: center;
-    }
-    .section.overdue .task-deadline { background: var(--overdue-bg); color: var(--overdue); }
-    .section.today .task-deadline { background: var(--today-bg); color: var(--today); }
-    .section.upcoming .task-deadline { background: var(--upcoming-bg); color: var(--upcoming); }
-
-    .empty-state {
-      padding: 28px 20px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    footer {
-      max-width: 860px;
-      margin: 32px auto 0;
-      text-align: center;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-    }
-    footer a { color: var(--accent); text-decoration: none; }
-
-    @media (max-width: 600px) {
-      .stats { flex-direction: column; gap: 8px; }
-      .stat-card { padding: 12px 14px; }
-    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px 48px;transition:background .3s,color .3s}
+    header{max-width:860px;margin:0 auto 32px;display:flex;align-items:center;justify-content:space-between}
+    .header-left h1{font-size:1.5rem;font-weight:700;letter-spacing:-.02em}
+    .subtitle{font-size:.8rem;color:var(--text-muted);margin-top:2px}
+    .toggle-wrap{display:flex;align-items:center;gap:8px}
+    .toggle-label{font-size:.78rem;color:var(--text-muted)}
+    .toggle{position:relative;width:44px;height:24px;cursor:pointer}
+    .toggle input{display:none}
+    .toggle-track{width:100%;height:100%;background:var(--toggle-bg);border-radius:99px;border:1px solid var(--border);transition:background .3s}
+    .toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--toggle-knob);border-radius:50%;transition:transform .25s}
+    [data-theme="light"] .toggle-knob{transform:translateX(20px)}
+    .stats{max-width:860px;margin:0 auto 28px;display:flex;gap:12px}
+    .stat-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow)}
+    .stat-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+    .stat-value{font-size:1.7rem;font-weight:700;line-height:1.1;margin-top:4px}
+    .stat-card.overdue .stat-value{color:var(--overdue)}
+    .stat-card.today .stat-value{color:var(--today)}
+    .stat-card.upcoming .stat-value{color:var(--upcoming)}
+    .sections{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+    .section-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+    .section-title{display:flex;align-items:center;gap:10px;font-weight:600;font-size:.9rem}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .section.overdue .dot{background:var(--overdue);box-shadow:0 0 6px var(--overdue)}
+    .section.today .dot{background:var(--today);box-shadow:0 0 6px var(--today)}
+    .section.upcoming .dot{background:var(--upcoming);box-shadow:0 0 6px var(--upcoming)}
+    .badge{font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:99px}
+    .section.overdue .badge{background:var(--overdue-bg);color:var(--overdue)}
+    .section.today .badge{background:var(--today-bg);color:var(--today)}
+    .section.upcoming .badge{background:var(--upcoming-bg);color:var(--upcoming)}
+    .task-list{list-style:none}
+    .task-item{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);transition:background .15s}
+    .task-item:last-child{border-bottom:none}
+    .task-item:hover{background:var(--surface2)}
+    .task-icon{margin-top:2px;font-size:.9rem;flex-shrink:0}
+    .task-body{flex:1;min-width:0}
+    .task-name{font-size:.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .task-meta{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+    .task-meta span{font-size:.72rem;color:var(--text-muted)}
+    .task-deadline{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:6px;flex-shrink:0;align-self:center}
+    .section.overdue .task-deadline{background:var(--overdue-bg);color:var(--overdue)}
+    .section.today .task-deadline{background:var(--today-bg);color:var(--today)}
+    .section.upcoming .task-deadline{background:var(--upcoming-bg);color:var(--upcoming)}
+    .empty-state{padding:28px 20px;text-align:center;color:var(--text-muted);font-size:.85rem}
+    footer{max-width:860px;margin:32px auto 0;text-align:center;font-size:.74rem;color:var(--text-muted)}
+    footer a{color:var(--accent);text-decoration:none}
+    @media(max-width:600px){.stats{flex-direction:column;gap:8px}}
   </style>
 </head>
 <body>
-
 <header>
   <div class="header-left">
     <h1>Athau's Daily Updates</h1>
-    <div class="subtitle">Last updated: <!-- LAST_UPDATED --></div>
+    <div class="subtitle">Last updated: Jul 12, 2026 at 09:16 PM UTC</div>
   </div>
   <div class="toggle-wrap">
     <span class="toggle-label" id="mode-label">Dark</span>
@@ -259,32 +87,368 @@
   </div>
 </header>
 
-<!-- STATS_BAR -->
-
-<div class="sections">
-  <!-- OVERDUE_SECTION -->
-  <!-- TODAY_SECTION -->
-  <!-- UPCOMING_SECTION -->
+<div class="stats">
+  <div class="stat-card overdue"><div class="stat-label">Overdue</div><div class="stat-value">26</div></div>
+  <div class="stat-card today"><div class="stat-label">Due Today</div><div class="stat-value">0</div></div>
+  <div class="stat-card upcoming"><div class="stat-label">Upcoming</div><div class="stat-value">14</div></div>
 </div>
-
-<footer>
-  Synced from <a href="https://notion.so" target="_blank">Notion</a> · Auto-updated daily at 4:00 AM
-</footer>
-
+<div class="sections">
+  
+      <div class="section overdue">
+        <div class="section-header">
+          <div class="section-title"><span class="dot"></span>🔴 Overdue</div>
+          <span class="badge">26</span>
+        </div>
+        <ul class="task-list">
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Last submission">Last submission</div>
+            
+          </div>
+          <span class="task-deadline">Sep 27</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="kerjain mbcc">kerjain mbcc</div>
+            <div class="task-meta"><span>📍 menyesuaikan</span></div>
+          </div>
+          <span class="task-deadline">Sep 27</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="briefing singkat PMW (2)">briefing singkat PMW (2)</div>
+            
+          </div>
+          <span class="task-deadline">Oct 17</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="pengerjaan gagasan kreatif">pengerjaan gagasan kreatif</div>
+            
+          </div>
+          <span class="task-deadline">Nov 21</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="cari villa">cari villa</div>
+            
+          </div>
+          <span class="task-deadline">Jan 29</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 11</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 14</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 14</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 16</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 18</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 21</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 23</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 25</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Feb 28</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Mar 02</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="Online Course time">Online Course time</div>
+            
+          </div>
+          <span class="task-deadline">Mar 04</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="kelas pengganti ROB">kelas pengganti ROB</div>
+            <div class="task-meta"><span>📁 Courses</span></div>
+          </div>
+          <span class="task-deadline">Mar 07</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="tryout">tryout</div>
+            <div class="task-meta"><span>📁 Courses</span></div>
+          </div>
+          <span class="task-deadline">May 02</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="tugas ukuran dispersi ">tugas ukuran dispersi </div>
+            <div class="task-meta"><span>📁 Courses</span></div>
+          </div>
+          <span class="task-deadline">May 02</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="rekap logbook ">rekap logbook </div>
+            <div class="task-meta"><span>📁 Courses</span></div>
+          </div>
+          <span class="task-deadline">May 23</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="distribsusi po 1">distribsusi po 1</div>
+            <div class="task-meta"><span>📁 Courses</span></div>
+          </div>
+          <span class="task-deadline">Jun 08</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="penilaian kelompok pkwu">penilaian kelompok pkwu</div>
+            <div class="task-meta"><span>📁 Courses</span></div>
+          </div>
+          <span class="task-deadline">Jun 15</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="mekanisme pengajuan tugas akhir ">mekanisme pengajuan tugas akhir </div>
+            <div class="task-meta"><span>📁 PRODIADBIS</span></div>
+          </div>
+          <span class="task-deadline">Jun 16</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="buat united purposesal">buat united purposesal</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Jun 25</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="REKAP FINANCIAL TRACKER">REKAP FINANCIAL TRACKER</div>
+            <div class="task-meta"><span>📁 My projects</span></div>
+          </div>
+          <span class="task-deadline">Jul 01</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">⚠️</span>
+          <div class="task-body">
+            <div class="task-name" title="bayar kas Juni">bayar kas Juni</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Jul 06</span>
+        </li></ul>
+      </div>
+      <div class="section today">
+        <div class="section-header">
+          <div class="section-title"><span class="dot"></span>🟡 Due Today</div>
+          <span class="badge">0</span>
+        </div>
+        <div class="empty-state">✓ No due today</div>
+      </div>
+      <div class="section upcoming">
+        <div class="section-header">
+          <div class="section-title"><span class="dot"></span>🟢 Upcoming</div>
+          <span class="badge">14</span>
+        </div>
+        <ul class="task-list">
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="regular checkup">regular checkup</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Jul 13</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="visit SUT">visit SUT</div>
+            <div class="task-meta"><span>📁 PRODIADBIS</span></div>
+          </div>
+          <span class="task-deadline">Jul 13</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="audiensi KPPU  X FIA UB">audiensi KPPU  X FIA UB</div>
+            <div class="task-meta"><span>📁 PRODIADBIS</span></div>
+          </div>
+          <span class="task-deadline">Jul 13</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="nata ulang monthly expense">nata ulang monthly expense</div>
+            <div class="task-meta"><span>📁 My projects</span></div>
+          </div>
+          <span class="task-deadline">Jul 14</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="design proposal udah jadi">design proposal udah jadi</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Jul 14</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="ngirim proposal">ngirim proposal</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Jul 15</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="LPJTT">LPJTT</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Aug 05</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="estimasi proker pertama PM mulai">estimasi proker pertama PM mulai</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Aug 29</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="comdev">comdev</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Sep 05</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="FPA">FPA</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Nov 07</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="akhir kepengurusan">akhir kepengurusan</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          <span class="task-deadline">Jan 10</span>
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="weekly report ministry">weekly report ministry</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="weekly report ministry">weekly report ministry</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          
+        </li>
+        <li class="task-item">
+          <span class="task-icon">📅</span>
+          <div class="task-body">
+            <div class="task-name" title="weekly report ministry">weekly report ministry</div>
+            <div class="task-meta"><span>📁 FPCI UB</span></div>
+          </div>
+          
+        </li></ul>
+      </div>
+</div>
+<footer>Synced from <a href="https://notion.so" target="_blank">Notion</a> · Auto-updated daily at 4:00 AM WIB</footer>
 <script>
-  function toggleTheme() {
-    const html = document.documentElement;
-    const isDark = html.getAttribute('data-theme') === 'dark';
-    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    document.getElementById('mode-label').textContent = isDark ? 'Light' : 'Dark';
-    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  function toggleTheme(){
+    const html=document.documentElement;
+    const isDark=html.getAttribute('data-theme')==='dark';
+    html.setAttribute('data-theme',isDark?'light':'dark');
+    document.getElementById('mode-label').textContent=isDark?'Light':'Dark';
+    localStorage.setItem('theme',isDark?'light':'dark');
   }
-
-  // Restore saved theme
-  const saved = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  document.getElementById('mode-label').textContent = saved === 'dark' ? 'Dark' : 'Light';
-  if (saved === 'light') document.getElementById('theme-toggle').checked = true;
+  const saved=localStorage.getItem('theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  document.getElementById('mode-label').textContent=saved==='dark'?'Dark':'Light';
+  if(saved==='light')document.getElementById('theme-toggle').checked=true;
 </script>
 </body>
 </html>
