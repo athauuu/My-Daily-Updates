@@ -9,7 +9,7 @@ import requests
 from datetime import date, datetime
 
 NOTION_TOKEN = os.environ["NOTION_TOKEN"]
-DB_ID = "246bb0f1-6f61-817a-b143-000b51efe268"
+DB_ID = "246bb0f1-6f61-8120-8245-def6cd522296"
 
 KNOWN_PROJECTS = {
     "307bb0f1-6f61-80c4-ac72-c9d3f03d8d1c": "FPCI UB",
